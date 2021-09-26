@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stack>
 #include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,13 +13,8 @@ void swap(int* a, int* b) {
 }
 
 vector<vector<int>> combi(int n, int r) {
-	vector<int> numbers;
 	vector<int> tmp;
 	vector<vector<int>> result;
-
-	for (int i = 0; i < n; i++) {
-		numbers.push_back(i);
-	}
 
 	for (int i = 0; i < n - r; i++) {
 		tmp.push_back(0);
@@ -33,10 +29,7 @@ vector<vector<int>> combi(int n, int r) {
 		vector<int> comb;
 		for (int i = 0; i < n; i++)
 		{	
-			if (tmp[i] == 1)
-			{
-				comb.push_back(numbers[i]);
-			}
+			comb.push_back(tmp[i]);
 		}
 		if (!comb.empty()) result.push_back(comb);
 
@@ -52,19 +45,23 @@ int solution(vector<vector<int>> stats){
 	vector<vector<int>> combination;
 	int A, B;
 		
-	combination = combi(N, N);
+	combination = combi(N, N/2);
 
 	for (int i = 0; i < combination.size(); i++) {
 		A = 0;
 		B = 0;
 		for (int j = 0; j < combination[i].size(); j++) {
-			for (int k = j+1; k < combination[i].size(); k++) {
-				A += stats[combination[i][j]][combination[i][k]];
-				A += stats[combination[i][k]][combination[i][j]];
+			for (int k = j + 1; k < combination[i].size(); k++) {
+				if (combination[i][j] == 1 && combination[i][k] == 1) {
+					A += stats[j][k];
+					A += stats[k][j];
+				}
+				else if (combination[i][j] == 0 && combination[i][k] == 0) {
+					B += stats[j][k];
+					B += stats[k][j];
+				}
 			}
 		}
-		B = sum - A;
-		cout << A << " " << B << " " << endl;
 		if (answer > abs(A - B)) answer = abs(A - B);
 	}
 
